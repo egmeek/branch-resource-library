@@ -1,1 +1,102 @@
-<div>CERTIFYING</div>
+<div>
+    <div ng-show="myCertification == null">
+        Not Certified
+    </div>
+    <div ng-show="myCertification">
+        Certified
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#certifyModal">
+  Certify Extension
+</button>
+    <div id="certifyModal" class="modal fade">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Certify Extension</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+                </div>
+                <div class="modal-body">
+                    <p>In order to begin the process to certify an extension you will need to select a github release to certify
+                        and what versions of Qlik Sense to certify against. Only a github release can be certified. Once
+                        you choose a release and which versions to certify against, the source code of the release will be
+                        automatically compared against the
+                        <strong>Extension Source Validation Guidelines</strong>. You can view these guidelines below. If
+                        the Extension Source Validation passes, the extension will be automatically and manually compared
+                        against the
+                        <strong>Extension Content Guidelines</strong>. You can view these guidelines below. The extension
+                        will also be tested to ensure it operates as expected.</p>
+
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-target="#source-validation">Extension Source Validation Guidelines</a>
+                                </h4>
+                            </div>
+                            <div id="source-validation" class="panel-collapse collapse panel-body">
+                                <p>In order for your extension to be certified, the release will be tested to ensure the source
+                                    code contains the following:</p>
+                                <ul>
+                                    <li>A README file</li>
+                                    <li>A LICENSE file</li>
+                                    <li>A .qext file. This file needs to have the following fields:
+                                        <ul>
+                                            <li>name</li>
+                                            <li>description</li>
+                                            <li>author</li>
+                                            <li>author contact information</li>
+                                        </ul>
+                                    </li>
+                                    <li>A .js file whose name matches the name of the .qext file</li>
+                                    <li>A "sample data" folder with sample data that can be used to test the extension</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-target="#content-guidelines">Extension Content Guidelines</a>
+                                </h4>
+                            </div>
+                            <div id="content-guidelines" class="panel-collapse collapse panel-body">
+                                <p>When you submit below to certify the extension, you agree that all files in the release adhere
+                                    to the following guidelines:</p>
+                                <ul>
+                                    <li>The README file contains the following:
+                                        <ul>
+                                            <li>A clear indication of the extension with a description, relevant screenshots</li>
+                                            <li>A detail of any extensions or technology that is used by the extension that requires
+                                                licensing
+                                            </li>
+                                            <li>Steps on how to set up the extension with the sample data provided</li>
+                                            <li>A clear indication of the responsiveness of the extension. This does not mean
+                                                the extension needs to be responsive, but an indication of how responsive
+                                                the extension is should be given</li>
+                                        </ul>
+                                    </li>
+
+                                    <li>There are no hidden or undocumented features. All features of the extension are fully
+                                        and correctly documented</li>
+                                    <li>The extension is well tested for performance. If the extension is expected to not perform
+                                        quickly and efficiently, this should be documented in the README file</li>
+                                    <li>The code for the extension is well written and efficient</li>
+                                    <li>The files in the repository and any files downloaded for the extension do not contain
+                                        objectionable content (pornography, illegal content, objectionable language, etc)</li>
+                                    <li>&lt;LEGAL MUMBO JUMBO&gt;</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Certify Extension</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

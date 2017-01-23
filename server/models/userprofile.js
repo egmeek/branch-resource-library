@@ -56,7 +56,8 @@ var userProfileSchema = new Schema({
   },
   createdate_num: Number,
   lastvisit: Date,
-  lastvisit_num: Number
+  lastvisit_num: Number,
+  certifiable: Boolean
 });
 
 module.exports = mongoose.model('userprofiles', userProfileSchema);
