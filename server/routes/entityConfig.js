@@ -51,6 +51,15 @@ module.exports = {
       limit: 20,
       requiresAuthentication: false    //only applies to GET requests. All other requests MUST be authenticated
     },
+    certification: {
+      collection: "certifications",
+      model: require("../models/certification"),
+      populates: "projectid",
+      exemptFromOwnership: true,
+      exemptFromApproval: true,
+      logViews: false,
+      limit: 10,
+    },
     rating: {
       collection: "ratings",
       model: require("../models/rating"),

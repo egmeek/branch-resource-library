@@ -31,7 +31,7 @@
     "express": "^4.12.0",
     "express-session": "^1.10.3",
     "formidable": "^1.0.17",
-    "github": "^7.0.0",
+    "github": "^8.1.0",
     "grunt": "^0.4.5",
     "grunt-contrib-copy": "^0.8.2",
     "grunt-contrib-less": "^1.0.0",
