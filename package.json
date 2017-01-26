@@ -57,6 +57,7 @@
     "recaptcha2": "^1.0.8",
     "request": "^2.74.0",
     "spam-check": "^0.9.9",
+    "tar.gz": "^1.0.5",
     "underscore": "^1.8.3",
     "uuid": "^2.0.2",
     "xml2js": "^0.4.17"

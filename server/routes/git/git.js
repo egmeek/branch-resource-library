@@ -1,7 +1,6 @@
 var express = require("express"),
   router = express.Router(),
   Project = require("../../models/project"),
-  git = require("github"),
   atob = require("atob"),
   Auth = require("../../controllers/auth"),
   Error = require("../../controllers/error"),
@@ -10,19 +9,7 @@ var express = require("express"),
   entities = require("../entityConfig"),
   request = require("request"),
   passport = require('passport'),
-  GitHub = new git({
-    // required
-    version: "3.0.0",
-    // optional
-    debug: false,
-    protocol: "https",
-    host: "api.github.com", // should be api.github.com for GitHub
-    pathPrefix: "", // for some GHEs; none for GitHub
-    timeout: 30000,
-    headers: {
-      "user-agent": Config.git.userAgent // GitHub is happy with a unique user agent
-    }
-  });
+  gitTools = require("../../controllers/git-tools")
 
 router.get("/updatereadme/:id", function (req, res) {
   if (!req.user) {
@@ -31,31 +18,18 @@ router.get("/updatereadme/:id", function (req, res) {
   else {
     getGithubInfo(req.params.id, req.user)
       .then((project) => {
-        GitHub.authenticate({ type: "token", token: Config.git.token });
-        GitHub.repos.getReadme({ owner: project.git_user, repo: project.git_repo, headers: { accept: 'application/vnd.github.VERSION.raw' } }, function (err, readmeresult) {
-          if (err) {
-            console.log(err);
-          }
-          GitHub.authenticate({ type: "token", token: Config.git.token });
-          GitHub.misc.renderMarkdownRaw(readmeresult, function (err, htmlresult) {
-            if (err) {
-              console.log(err)
-              res.json(Error.custom(err))
-            }
-            else {
-              htmlresult = htmlresult.data
-              htmlresult = htmlresult.replace(/href="((?!http)[^>]*)"/gim, "href=\"https://github.com/" + project.git_user + "/" + project.git_repo + "/raw/master/$1\"")
-              htmlresult = htmlresult.replace(/src="((?!http)[^>]*)"/gim, "src=\"https://github.com/" + project.git_user + "/" + project.git_repo + "/raw/master/$1\"")
-              result.content = htmlresult;
-              result.save(function (err) {
-                if (err) {
-                  console.log(err)
-                }
+        gitTools.getReadme({ owner: project.git_user, repo: project.git_repo })
+          .then(markdown => gitTools.renderMarkdown({ markdown: markdown }))
+          .then(readmeHtml => {
+            readmeHtml = readmeHtml.replace(/href="((?!http)[^>]*)"/gim, "href=\"https://github.com/" + project.git_user + "/" + project.git_repo + "/raw/master/$1\"")
+            readmeHtml = readmeHtml.replace(/src="((?!http)[^>]*)"/gim, "src=\"https://github.com/" + project.git_user + "/" + project.git_repo + "/raw/master/$1\"")
+            project.content = readmeHtml;
+            project.save()
+              .catch(err => {
+                console.error(err)
               });
-              res.json(project || {})
-            }
-          });
-        });
+            res.json(project || {})
+          })
       })
       .catch((err) => {
         res.json(Error.custom(err))
@@ -69,14 +43,9 @@ router.get("/releases/:id", (req, res) => {
   }
   else {
     getGithubInfo(req.params.id, req.user)
-      .then((project) => {
-        GitHub.authenticate({ type: "token", token: Config.git.token });
-        GitHub.repos.getReleases({ owner: project.git_user, repo: project.git_repo, headers: { accept: 'application/vnd.github.VERSION.raw' } }, function (err, releases) {
-          if (err) {
-            console.log(err)
-          }
-          res.json({ data: releases } || {})
-        })
+      .then((project) => gitTools.getReleases({ owner: project.git_user, repo: project.git_repo }))
+      .then(releases => {
+        res.json({ data: releases } || {})
       })
       .catch((err) => {
         res.json(Error.custom(err))
@@ -247,17 +216,14 @@ function getAccessTokenAndUser(data, callbackFn) {
         console.log(parts);
         responseData[parts[0]] = parts[1];
       }
-      GitHub.authenticate({ type: "oauth", token: responseData.access_token });
-      GitHub.users.get({}, function (err, user) {
-        if (err) {
-          console.log('error getting user');
-          console.log(err);
-          callbackFn.call(null, { err: err });
-        }
-        else {
+      gitTools.getAuthenticatedUser({ oauthToken: responseData.access_token })
+        .then(user => {
           callbackFn.call(null, { response: responseData, user: user });
-        }
-      });
+        })
+        .catch(err => {
+          console.error("error getting user", err);
+          callbackFn.call(null, { err: err });
+        })
     }
   });
 }
